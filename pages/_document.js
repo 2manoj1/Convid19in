@@ -8,13 +8,23 @@ export default class MyDocument extends Document {
     return (
       <html lang="en">
         <Head>
-          {/* PWA primary color */}
+          <meta name="description" content="Details of CONVID-19 outbreak in India (Data Updated from Govt. Source)" />
+          <meta property="og:type" content="website" />
+          <meta name="og:title" property="og:title" content="COVID-19 in India" />
+          <meta name="og:description" property="og:description" content="Corona Virus outbreak in India details data" />
+          <meta property="og:site_name" content="convid19in" />
+          <meta property="og:url" content="https://convid19in.now.sh" />
+          <meta name="twitter:card" content="convid19" />
+          <meta name="twitter:title" content="convid19 India" />
+          <meta name="twitter:description" content="convid19 India deails data" />
+          <meta name="twitter:site" content="@MoHFW_INDIA" />
+          <meta name="twitter:creator" content="ManojMukherje19" />
           <meta name="theme-color" content={theme.palette.primary.main} />
           <link
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
           />
-         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
+          <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
         </Head>
         <body>
           <Main />
