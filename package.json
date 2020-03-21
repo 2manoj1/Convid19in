@@ -8,8 +8,17 @@
     "start": "next start"
   },
   "dependencies": {
+    "@material-ui/core": "^4.9.7",
+    "@material-ui/icons": "^4.9.1",
+    "clsx": "^1.1.0",
+    "highcharts": "^8.0.4",
+    "highcharts-react-official": "^3.0.0",
+    "isomorphic-unfetch": "^3.0.0",
+    "material-table": "^1.57.2",
     "next": "9.2.2",
     "react": "16.13.0",
-    "react-dom": "16.13.0"
+    "react-dom": "16.13.0",
+    "react-resize-detector": "^4.2.1",
+    "recharts": "^1.8.5"
   }
 }

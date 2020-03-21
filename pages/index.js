@@ -1,203 +1,281 @@
-import Head from 'next/head'
+import React from 'react';
+import clsx from 'clsx';
+import fetch from 'isomorphic-unfetch';
+import { makeStyles } from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Drawer from '@material-ui/core/Drawer';
+import Box from '@material-ui/core/Box';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import List from '@material-ui/core/List';
+import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
+import Badge from '@material-ui/core/Badge';
+import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Link from '@material-ui/core/Link';
+import MenuIcon from '@material-ui/icons/Menu';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import { mainListItems } from '../components/listItem';
+import Chart from '../components/Chart';
+import Orders from '../components/Orders';
+import DataTitles from '../components/DataTitles';
 
-const Home = () => (
-  <div className="container">
-    <Head>
-      <title>Create Next App</title>
-      <link rel="icon" href="/favicon.ico" />
-    </Head>
+function Copyright({ url }) {
+  return (
+    <>
+      <Typography variant="body2" color="textSecondary" align="center">
+        {'Data Source: '}
+        <Link color="primary" href={url}>
+          Ministry of Health and Family Welfare
+      </Link>
+      </Typography>
+      <Typography variant="body2" color="textSecondary" align="center">
+        {' Design and Developed By '}
+        < Link color="primary" href={'https://www.linkedin.com/in/manoj-mukherjee/'}>
+          Manoj Mukherjee</Link> {' © '}
+        {new Date().getFullYear()}
+        {'.'}
+      </Typography>
+    </>
+  );
+}
 
-    <main>
-      <h1 className="title">
-        Welcome to <a href="https://nextjs.org">Next.js!</a>
-      </h1>
+const drawerWidth = 240;
 
-      <p className="description">
-        Get started by editing <code>pages/index.js</code>
-      </p>
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
+  },
+  toolbar: {
+    paddingRight: 24, // keep right padding when drawer closed
+  },
+  toolbarIcon: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: '0 8px',
+    ...theme.mixins.toolbar,
+  },
+  appBar: {
+    zIndex: theme.zIndex.drawer + 1,
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+  },
+  appBarShift: {
+    marginLeft: drawerWidth,
+    width: `calc(100% - ${drawerWidth}px)`,
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  menuButton: {
+    marginRight: 36,
+  },
+  menuButtonHidden: {
+    display: 'none',
+  },
+  title: {
+    flexGrow: 1,
+  },
+  drawerPaper: {
+    position: 'relative',
+    whiteSpace: 'nowrap',
+    width: drawerWidth,
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  drawerPaperClose: {
+    overflowX: 'hidden',
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    width: theme.spacing(7),
+    [theme.breakpoints.up('sm')]: {
+      width: theme.spacing(9),
+    },
+  },
+  appBarSpacer: theme.mixins.toolbar,
+  content: {
+    flexGrow: 1,
+    height: '100vh',
+    overflow: 'auto',
+  },
+  container: {
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
+  },
+  paper: {
+    padding: theme.spacing(2),
+    display: 'flex',
+    overflow: 'auto',
+    flexDirection: 'column',
+  },
+  fixedHeight: {
+    height: 500,
+  },
+}));
 
-      <div className="grid">
-        <a href="https://nextjs.org/docs" className="card">
-          <h3>Documentation &rarr;</h3>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a href="https://nextjs.org/learn" className="card">
-          <h3>Learn &rarr;</h3>
-          <p>Learn about Next.js in an interactive course with quizzes!</p>
-        </a>
-
-        <a
-          href="https://github.com/zeit/next.js/tree/master/examples"
-          className="card"
-        >
-          <h3>Examples &rarr;</h3>
-          <p>Discover and deploy boilerplate example Next.js projects.</p>
-        </a>
-
-        <a
-          href="https://zeit.co/new?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          className="card"
-        >
-          <h3>Deploy &rarr;</h3>
-          <p>
-            Instantly deploy your Next.js site to a public URL with ZEIT Now.
-          </p>
-        </a>
-      </div>
-    </main>
-
-    <footer>
-      <a
-        href="https://zeit.co?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-        target="_blank"
-        rel="noopener noreferrer"
+const Dashboard = ({ totalCountChart, titles, stateWiseData, source, error, ...restProps }) => {
+  const classes = useStyles();
+  const [open, setOpen] = React.useState(false);
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  if (error) {
+    return (<div className={classes.root}>
+      <CssBaseline />
+      <Grid>
+        We are down!!!
+    </Grid>
+    </div>)
+  }
+  return (
+    <div className={classes.root}>
+      <CssBaseline />
+      <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
+        <Toolbar className={classes.toolbar}>
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+          Novel Corona Virus - India
+          </Typography>
+          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+          The Helpline Number for corona-virus : +91-11-23978046 Toll Free No: 1075
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        variant="permanent"
+        classes={{
+          paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
+        }}
+        open={open}
       >
-        Powered by <img src="/zeit.svg" alt="ZEIT Logo" />
-      </a>
-    </footer>
+        <div className={classes.toolbarIcon}>
+          <IconButton onClick={handleDrawerClose}>
+            <ChevronLeftIcon />
+          </IconButton>
+        </div>
+        <Divider />
+        <List>{mainListItems}</List>
+      </Drawer>
+      <main className={classes.content}>
+        <div className={classes.appBarSpacer} />
+        <Container maxWidth="lg" className={classes.container}>
+          <Grid container spacing={3}>
+            {/* Chart */}
+            <Grid item xs={12} md={8} lg={9}>
+              <Paper className={fixedHeightPaper}>
+                <Chart {...totalCountChart} />
+              </Paper>
+            </Grid>
+            {/* Recent Deposits */}
+            <Grid item xs={12} md={4} lg={3}>
+              <Grid container spacing={3}>
+                {titles.map((t, i) => <Grid key={i} item xs={12}>
+                  <Paper className={classes.paper} style={{ textAlign: "center" }}>
+                    <DataTitles {...t} />
+                  </Paper>
+                </Grid>
+                )
+                }
+              </Grid>
+            </Grid>
+            {/* Recent Orders */}
+            <Grid item xs={12}>
+              <Orders {...stateWiseData} />
+            </Grid>
+          </Grid>
+          <Box pt={4}>
+            <Copyright {...source} />
+          </Box>
+        </Container>
+      </main>
+    </div>
+  );
+}
 
-    <style jsx>{`
-      .container {
-        min-height: 100vh;
-        padding: 0 0.5rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+Dashboard.getInitialProps = async function () {
+  try {
+    const res = await fetch('https://2m0uxvgkgb.execute-api.us-east-2.amazonaws.com/Prod/');
+    const data = await res.json();
+    if(!data) {
+      throw new Error('Data server down');
+    }
+    const { indian, foreigner, death } = data.Total;
+
+    const aY = parseInt(indian);
+    const bY = parseInt(foreigner);
+
+    const titles = [{
+      title: 'Total Confirm Cases',
+      count: aY + bY
+    },
+    {
+      title: 'Death',
+      count: death
+    },
+    {
+      title: 'Cured/Discharged/Migrated',
+      count: data.Total['Cured/Discharged/Migrated']
+    }
+    ];
+
+    const statesData = data['effected states'];
+    const stateDataColumn = [{ title: 'State/UT', field: 'state' },
+    { title: 'Indian National', field: 'indian' },
+    { title: 'Foreign National ', field: 'foreign' },
+    { title: 'Cured/Discharged/Migrated', field: 'cured' },
+    { title: 'Death', field: 'death' }
+    ];
+    const dataStates = statesData.map((a) => ({
+      "state": a.namestateorut,
+      "indian": a.totalConfirmcase.indian,
+      "foreign": a.totalConfirmcase.Foreigner,
+      "cured": a['Cured/Discharged/Migrated'],
+      "death": a.death
+    }));
+    return {
+      totalCountChart: {
+        data: [{ name: "INDIAN", y: aY, color: 'rgb(241, 92, 128)' },
+        { name: "FOREIGNER", y: bY, color: 'rgb(124, 181, 236)' }],
+        title: `Total Confirm Cases <b>${aY + bY}</b> as on <b>${data.Lastupdated}</b> in India`
+      },
+      titles: titles || [],
+      stateWiseData: {
+        columns: stateDataColumn,
+        data: dataStates
+      },
+      source: {
+        url: data.Datasourceurl
       }
+    };
+  }
+  catch (err) {
+    console.log(err);
+    return { error: 'Something went wrong' }
+  }
+};
 
-      main {
-        padding: 5rem 0;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-      }
-
-      footer {
-        width: 100%;
-        height: 100px;
-        border-top: 1px solid #eaeaea;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      footer img {
-        margin-left: 0.5rem;
-      }
-
-      footer a {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
-
-      .title a {
-        color: #0070f3;
-        text-decoration: none;
-      }
-
-      .title a:hover,
-      .title a:focus,
-      .title a:active {
-        text-decoration: underline;
-      }
-
-      .title {
-        margin: 0;
-        line-height: 1.15;
-        font-size: 4rem;
-      }
-
-      .title,
-      .description {
-        text-align: center;
-      }
-
-      .description {
-        line-height: 1.5;
-        font-size: 1.5rem;
-      }
-
-      code {
-        background: #fafafa;
-        border-radius: 5px;
-        padding: 0.75rem;
-        font-size: 1.1rem;
-        font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-          DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-      }
-
-      .grid {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-wrap: wrap;
-
-        max-width: 800px;
-        margin-top: 3rem;
-      }
-
-      .card {
-        margin: 1rem;
-        flex-basis: 45%;
-        padding: 1.5rem;
-        text-align: left;
-        color: inherit;
-        text-decoration: none;
-        border: 1px solid #eaeaea;
-        border-radius: 10px;
-        transition: color 0.15s ease, border-color 0.15s ease;
-      }
-
-      .card:hover,
-      .card:focus,
-      .card:active {
-        color: #0070f3;
-        border-color: #0070f3;
-      }
-
-      .card h3 {
-        margin: 0 0 1rem 0;
-        font-size: 1.5rem;
-      }
-
-      .card p {
-        margin: 0;
-        font-size: 1.25rem;
-        line-height: 1.5;
-      }
-
-      @media (max-width: 600px) {
-        .grid {
-          width: 100%;
-          flex-direction: column;
-        }
-      }
-    `}</style>
-
-    <style jsx global>{`
-      html,
-      body {
-        padding: 0;
-        margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-          Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-    `}</style>
-  </div>
-)
-
-export default Home
+export default Dashboard;
