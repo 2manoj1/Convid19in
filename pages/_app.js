@@ -20,7 +20,20 @@ export default class MyApp extends App {
     return (
       <React.Fragment>
         <Head>
-          <title>Convid19 India</title>
+          <meta name="description" content="Details of COVID-19 outbreak in India (Data Updated from Govt. Source)" />
+          <meta name="keywords" content="COVID-19, COVID, coronavirus, virus 2020, India Covid19, Govt. Data, Novel Corona Virus" />
+          <meta name="author" content="Manoj Mukherjee" />
+          <meta property="og:type" content="website" />
+          <meta name="og:title" property="og:title" content="COVID-19 in India" />
+          <meta name="og:description" property="og:description" content="Corona Virus outbreak in India details data" />
+          <meta property="og:site_name" content="covid19in" />
+          <meta property="og:url" content="https://covid19in.now.sh" />
+          <meta name="twitter:card" content="covid19" />
+          <meta name="twitter:title" content="covid19 India" />
+          <meta name="twitter:description" content="covid19 India deails data" />
+          <meta name="twitter:site" content="@MoHFW_INDIA" />
+          <meta name="twitter:creator" content="ManojMukherje19" />
+          <title>COVID-19 India Data</title>
           <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
         </Head>
         <ThemeProvider theme={theme}>
