@@ -88,24 +88,26 @@ class LineChart extends React.Component {
     }
 
     onResize = (width, height) => {
-        //this.setState({width, height});
-        if (this.chartRef && this.chartRef.current) {
-            this.chartRef.current.chart.reflow();
+        if (this.state.width !== width || this.state.height !== height) {
+            this.setState({ width, height });
+            if (this.chartRef && this.chartRef.current) {
+                this.chartRef.current.chart.reflow();
+            }
         }
     }
 
-
     render() {
-        const { chartOptions } = this.state;
+        const { chartOptions, width, height } = this.state;
         return (
             <>
                 <Box width="100%" height="100%" ref={this.parentRef}>
-                    <HighchartsReact
+                    {width && <HighchartsReact
                         highcharts={Highcharts}
                         options={chartOptions}
-                        containerProps={{ style: { height: "100%", width: "100%" } }}
+                        containerProps={{ style: { height: `${height}px`, width: `${width}px` } }}
                         ref={this.chartRef}
                     />
+                    }
                 </Box>
                 <ResizeDetector handleWidth handleHeight onResize={this.onResize} targetDomEl={this.parentRef.current} />
             </>
