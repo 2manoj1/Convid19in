@@ -230,7 +230,6 @@ Dashboard.getInitialProps = async function () {
       throw new Error('Data server down');
     }
     const { indian, foreigner, death } = data.Total;
-    console.log(indian);
 
     const aY = parseInt(indian);
     const bY = parseInt(foreigner);

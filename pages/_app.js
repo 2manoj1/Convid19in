@@ -33,8 +33,29 @@ export default class MyApp extends App {
           <meta name="twitter:description" content="covid19 India deails data" />
           <meta name="twitter:site" content="@MoHFW_INDIA" />
           <meta name="twitter:creator" content="ManojMukherje19" />
+          <link rel="manifest" href="/manifest.json" />
           <title>COVID-19 India Data</title>
           <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+
+          <meta name="mobile-web-app-capable" content="yes" />
+
+          <meta name="apple-mobile-web-app-title" content="Application Title" />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+          <meta name="msapplication-navbutton-color" content="red" />
+          <meta name="msapplication-TileColor" content="red" />
+          <meta name="msapplication-TileImage" content="ms-icon-144x144.png" />
+          <meta name="msapplication-config" content="browserconfig.xml" />
+          <meta name="application-name" content="Application Name" />
+          <meta name="msapplication-tooltip" content="Tooltip Text" />
+          <meta name="msapplication-starturl" content="/" />
+          <meta name="msapplication-tap-highlight" content="no" />
+          <meta name="full-screen" content="yes" />
+          <meta name="browsermode" content="application" />
+          <meta name="nightmode" content="enable/disable" />
+          <meta name="layoutmode" content="fitscreen/standard" />
+          <meta name="imagemode" content="force" />
+          <meta name="screen-orientation" content="portrait" />
         </Head>
         <ThemeProvider theme={theme}>
           {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
