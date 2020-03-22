@@ -16,6 +16,7 @@ import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Link from '@material-ui/core/Link';
+import Alert from '@material-ui/lab/Alert';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
@@ -23,6 +24,7 @@ import { mainListItems } from '../components/listitem';
 import Chart from '../components/Chart';
 import Orders from '../components/Orders';
 import DataTitles from '../components/DataTitles';
+import { Snackbar } from '@material-ui/core';
 
 function Copyright({ url }) {
   return (
@@ -44,7 +46,7 @@ function Copyright({ url }) {
   );
 }
 
-const drawerWidth = 240;
+const drawerWidth = 200;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -121,13 +123,14 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
   },
   fixedHeight: {
-    height: 500,
+    height: 560,
   },
 }));
 
-const Dashboard = ({ totalCountChart, titles, stateWiseData, source, error, ...restProps }) => {
+const Dashboard = ({ totalCountChart, titles, stateWiseData, source, error, Note, ...restProps }) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
+  const [infoOpen, setInfoOpen] = React.useState(Note !== "");
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -158,10 +161,10 @@ const Dashboard = ({ totalCountChart, titles, stateWiseData, source, error, ...r
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-          Novel Corona Virus - India
+            Novel Corona Virus - India
           </Typography>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-          The Helpline Number for corona-virus : +91-11-23978046 Toll Free No: 1075
+            The Helpline Number for corona-virus : +91-11-23978046 Toll Free No: 1075
           </Typography>
         </Toolbar>
       </AppBar>
@@ -183,6 +186,9 @@ const Dashboard = ({ totalCountChart, titles, stateWiseData, source, error, ...r
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
+          <Snackbar anchorOrigin={ {vertical: 'top', horizontal: 'center' }} open={infoOpen} autoHideDuration={20000} onClose={() => setInfoOpen(false)}>
+            <Alert variant="filled" severity="info" onClose={() => setInfoOpen(false)}>{Note}</Alert>
+          </Snackbar>
           <Grid container spacing={3}>
             {/* Chart */}
             <Grid item xs={12} md={8} lg={9}>
@@ -220,14 +226,14 @@ Dashboard.getInitialProps = async function () {
   try {
     const res = await fetch('https://2m0uxvgkgb.execute-api.us-east-2.amazonaws.com/Prod/');
     const data = await res.json();
-    if(!data) {
+    if (!data) {
       throw new Error('Data server down');
     }
     const { indian, foreigner, death } = data.Total;
+    console.log(indian);
 
     const aY = parseInt(indian);
     const bY = parseInt(foreigner);
-
     const titles = [{
       title: 'Total Confirm Cases',
       count: aY + bY
@@ -237,9 +243,13 @@ Dashboard.getInitialProps = async function () {
       count: death
     },
     {
-      title: 'Cured/Discharged/Migrated',
+      title: 'Cured / Discharged/ Migrated',
       count: data.Total['Cured/Discharged/Migrated']
-    }
+    },
+    {
+      title: 'Screened at Airport',
+      count: data.Totalinfo['screened_at_airpot']
+    },
     ];
 
     const statesData = data['effected states'];
@@ -269,7 +279,8 @@ Dashboard.getInitialProps = async function () {
       },
       source: {
         url: data.Datasourceurl
-      }
+      },
+      Note: data.Note
     };
   }
   catch (err) {
