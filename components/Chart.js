@@ -64,8 +64,7 @@ class LineChart extends React.Component {
                 series: [{
                     type: 'pie',
                     name: 'Corona',
-                    data: [{ name: 'INDIAN', y: 244, color: 'rgb(241, 92, 128)' },
-                    { name: 'FOREIGNER', y: 39, color: 'rgb(124, 181, 236)' }]
+                    data: props.data
                 }]
             }
         }
