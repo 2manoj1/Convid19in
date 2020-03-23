@@ -222,7 +222,7 @@ const Dashboard = ({ totalCountChart, titles, stateWiseData, source, error, Note
   );
 }
 
-Dashboard.getInitialProps = async function () {
+export async function getServerSideProps() {
   try {
     const res = await fetch('https://2m0uxvgkgb.execute-api.us-east-2.amazonaws.com/Prod/');
     const data = await res.json();
@@ -265,7 +265,7 @@ Dashboard.getInitialProps = async function () {
       "cured": a['Cured/Discharged/Migrated'],
       "death": a.death
     }));
-    return {
+    return {props: {
       totalCountChart: {
         data: [{ name: "INDIAN", y: aY, color: 'rgb(241, 92, 128)' },
         { name: "FOREIGNER", y: bY, color: 'rgb(124, 181, 236)' }],
@@ -280,12 +280,12 @@ Dashboard.getInitialProps = async function () {
         url: data.Datasourceurl
       },
       Note: data.Note
-    };
+    }};
   }
   catch (err) {
     console.log(err);
-    return { error: 'Something went wrong' }
+    return { props: {error: 'Something went wrong' }}
   }
-};
+}
 
 export default Dashboard;
