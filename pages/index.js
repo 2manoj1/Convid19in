@@ -186,7 +186,7 @@ const Dashboard = ({ totalCountChart, titles, stateWiseData, source, error, Note
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          <Snackbar anchorOrigin={ {vertical: 'top', horizontal: 'center' }} open={infoOpen} autoHideDuration={20000} onClose={() => setInfoOpen(false)}>
+          <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={infoOpen} autoHideDuration={20000} onClose={() => setInfoOpen(false)}>
             <Alert variant="filled" severity="info" onClose={() => setInfoOpen(false)}>{Note}</Alert>
           </Snackbar>
           <Grid container spacing={3}>
@@ -222,9 +222,14 @@ const Dashboard = ({ totalCountChart, titles, stateWiseData, source, error, Note
   );
 }
 
-export async function getServerSideProps() {
+export async function getServerSideProps({ req }) {
   try {
-    const res = await fetch('https://2m0uxvgkgb.execute-api.us-east-2.amazonaws.com/Prod/');
+    const protocol = (req && req.connection.encrypted ? 'https' : 'http') + '://';
+    let baseUrl = req ? `${protocol}${req.headers.host}` : '';
+    if (typeof window !== 'undefined') {
+      baseUrl = window.location.origin;
+    }
+    const res = await fetch(`${baseUrl}/api/coronain`);
     const data = await res.json();
     if (!data) {
       throw new Error('Data server down');
@@ -265,26 +270,28 @@ export async function getServerSideProps() {
       "cured": a['Cured/Discharged/Migrated'],
       "death": a.death
     }));
-    return {props: {
-      totalCountChart: {
-        data: [{ name: "INDIAN", y: aY, color: 'rgb(241, 92, 128)' },
-        { name: "FOREIGNER", y: bY, color: 'rgb(124, 181, 236)' }],
-        title: `Total Confirm Cases <b>${aY + bY}</b> as on <b>${data.Lastupdated}</b> in India`
-      },
-      titles: titles || [],
-      stateWiseData: {
-        columns: stateDataColumn,
-        data: dataStates
-      },
-      source: {
-        url: data.Datasourceurl
-      },
-      Note: data.Note
-    }};
+    return {
+      props: {
+        totalCountChart: {
+          data: [{ name: "INDIAN", y: aY, color: 'rgb(241, 92, 128)' },
+          { name: "FOREIGNER", y: bY, color: 'rgb(124, 181, 236)' }],
+          title: `Total Confirm Cases <b>${aY + bY}</b> as on <b>${data.Lastupdated}</b> in India`
+        },
+        titles: titles || [],
+        stateWiseData: {
+          columns: stateDataColumn,
+          data: dataStates
+        },
+        source: {
+          url: data.Datasourceurl
+        },
+        Note: data.Note
+      }
+    };
   }
   catch (err) {
     console.log(err);
-    return { props: {error: 'Something went wrong' }}
+    return { props: { error: 'Something went wrong' } }
   }
 }
 

@@ -19,6 +19,7 @@ export default class MyApp extends App {
 
     return (
       <React.Fragment>
+        <Head><title>COVID-19 India Data</title></Head>
         <ThemeProvider theme={theme}>
           {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
           <CssBaseline />
