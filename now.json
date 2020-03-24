@@ -1,45 +1,9 @@
 {
-    "version": 2,
-    "name": "covid19-in",
+    "source": "/(.*)",
     "headers": [
-        {
-          "source": "/service-worker.js",
-          "headers" : [
-            {
-              "key" : "Cache-Control",
-              "value" : "public, max-age=0, must-revalidate"
-            }
-          ]
-        },
-        {
-          "source": "/api/*",
-          "headers" : [
-            {
-              "key" : "Content-Type",
-              "value" : "application/json"
-            },
-            {
-              "key" : "Cache-Control",
-              "value" : "public, max-age=3600"
-            }
-          ]
-        },
-        {
-          "source": "/(.*)",
-          "headers" : [
-            {
-              "key" : "X-Content-Type-Options",
-              "value" : "nosniff"
-            },
-            {
-              "key" : "X-Frame-Options",
-              "value" : "DENY"
-            },
-            {
-              "key" : "X-XSS-Protection",
-              "value" : "1; mode=block"
-            }
-          ]
-        }
-      ]
-}
+      {
+        "key": "Cache-Control",
+        "value": "s-maxage=1, stale-while-revalidate"
+      }
+    ]
+  }
