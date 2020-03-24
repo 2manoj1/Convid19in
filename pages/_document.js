@@ -21,7 +21,6 @@ export default class MyDocument extends Document {
           <meta name="twitter:description" content="covid19 India deails data" />
           <meta name="twitter:site" content="@MoHFW_INDIA" />
           <meta name="twitter:creator" content="ManojMukherje19" />
-          <title>COVID-19 India Data</title>
           <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
 
           <meta name="mobile-web-app-capable" content="yes" />
