@@ -151,7 +151,7 @@ const Dashboard = ({ totalCountChart, titles, stateWiseData, source, error, Note
       <CssBaseline />
       <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
         <Toolbar className={classes.toolbar}>
-          <IconButton
+          {/* <IconButton
             edge="start"
             color="inherit"
             aria-label="open drawer"
@@ -159,7 +159,7 @@ const Dashboard = ({ totalCountChart, titles, stateWiseData, source, error, Note
             className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
           >
             <MenuIcon />
-          </IconButton>
+          </IconButton> */}
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             Novel Corona Virus - India
           </Typography>
@@ -168,7 +168,7 @@ const Dashboard = ({ totalCountChart, titles, stateWiseData, source, error, Note
           </Typography>
         </Toolbar>
       </AppBar>
-      <Drawer
+{/*       <Drawer
         variant="permanent"
         classes={{
           paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
@@ -182,7 +182,7 @@ const Dashboard = ({ totalCountChart, titles, stateWiseData, source, error, Note
         </div>
         <Divider />
         <List>{mainListItems}</List>
-      </Drawer>
+      </Drawer> */}
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
@@ -191,21 +191,19 @@ const Dashboard = ({ totalCountChart, titles, stateWiseData, source, error, Note
           </Snackbar>
           <Grid container spacing={3}>
             {/* Chart */}
-            <Grid item xs={12} md={8} lg={9}>
+            {/*<Grid item xs={12} md={8} lg={9}>
               <Paper className={fixedHeightPaper}>
                 <Chart {...totalCountChart} />
               </Paper>
-            </Grid>
+      </Grid>*/}
             {/* Recent Deposits */}
-            <Grid item xs={12} md={4} lg={3}>
-              <Grid container spacing={3}>
-                {titles.map((t, i) => <Grid key={i} item xs={12}>
-                  <Paper className={classes.paper} style={{ textAlign: "center" }}>
-                    <DataTitles {...t} />
-                  </Paper>
-                </Grid>
-                )
-                }
+            <Grid item xs={12}>
+              <Grid container justify="center" spacing={3}>
+                {titles.map((t, i) => (
+                  <Grid key={i} xs={12} md={6} lg={3} item>
+                    <Paper className={classes.paper} style={{ textAlign: 'center', minHeight: '150px' }}><DataTitles {...t} /></Paper>
+                  </Grid>
+                ))}
               </Grid>
             </Grid>
             {/* Recent Orders */}
@@ -234,13 +232,12 @@ export async function getServerSideProps({ req }) {
     if (!data) {
       throw new Error('Data server down');
     }
-    const { indian, foreigner, death } = data.Total;
-
-    const aY = parseInt(indian);
-    const bY = parseInt(foreigner);
+    const { Total_Confirmed_cases, death } = data.Total;
+    //const aY = parseInt(indian);
+    //const bY = parseInt(foreigner);
     const titles = [{
       title: 'Total Confirm Cases',
-      count: aY + bY
+      count: Total_Confirmed_cases
     },
     {
       title: 'Death',
@@ -258,25 +255,24 @@ export async function getServerSideProps({ req }) {
 
     const statesData = data['effected states'];
     const stateDataColumn = [{ title: 'State/UT', field: 'state' },
-    { title: 'Indian National', field: 'indian' },
-    { title: 'Foreign National ', field: 'foreign' },
+    { title: 'Total Confirm Cases', field: 'totalcase' },
     { title: 'Cured/Discharged/Migrated', field: 'cured' },
     { title: 'Death', field: 'death' }
     ];
     const dataStates = statesData.map((a) => ({
       "state": a.namestateorut,
-      "indian": a.totalConfirmcase.indian,
-      "foreign": a.totalConfirmcase.Foreigner,
+      "totalcase": a.totalConfirmcase,
       "cured": a['Cured/Discharged/Migrated'],
       "death": a.death
     }));
-    return {
-      props: {
-        totalCountChart: {
+    /* totalCountChart: {
           data: [{ name: "INDIAN", y: aY, color: 'rgb(241, 92, 128)' },
           { name: "FOREIGNER", y: bY, color: 'rgb(124, 181, 236)' }],
           title: `Total Confirm Cases <b>${aY + bY}</b> as on <b>${data.Lastupdated}</b> in India`
         },
+      */
+    return {
+      props: {
         titles: titles || [],
         stateWiseData: {
           columns: stateDataColumn,

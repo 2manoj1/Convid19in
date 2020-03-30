@@ -32,16 +32,15 @@ const fetchData = async () => {
         })
         statsTable.each(function (i) {
             const tds = $(this).find('td');
-            if (tds.length === 5) {
+            if (tds.length === 4) {
                 dataCoronaDetails['Total'] = {
-                    indian: ($('strong', tds).eq(1).text() || '').replace(/,/g, ''),
-                    foreigner: ($('strong', tds).eq(2).text() || '').replace(/,/g, ''),
-                    'Cured/Discharged/Migrated': ($('strong', tds).eq(3).text() || '').replace(/,/g, ''),
-                    death: ($('strong', tds).eq(4).text() || '').replace(/,/g, '')
+                    'Total_Confirmed_cases': ($('strong', tds).eq(1).text() || '').replace(/,/g, ''),
+                    'Cured/Discharged/Migrated': ($('strong', tds).eq(2).text() || '').replace(/,/g, ''),
+                    death: ($('strong', tds).eq(3).text() || '').replace(/,/g, '')
                 }
             } else {
                 const rowData = {
-                    SL: 0, namestateorut: '', totalConfirmcase: { indian: 0, Foreigner: 0 },
+                    SL: 0, namestateorut: '', totalConfirmcase: 0,
                     'Cured/Discharged/Migrated': 0, death: 0
                 };
                 const stateName = ($(tds).eq(1).text() || '').trim();
@@ -49,10 +48,10 @@ const fetchData = async () => {
                     rowData['SL'] = Number(($(tds).eq(0).text() || '').replace(/,/g, ''));
                     rowData['namestateorut'] = $(tds).eq(1).text();
                     const c1 = Number(($(tds).eq(2).text() || '').replace(/,/g, ''));
-                    const c2 = Number(($(tds).eq(3).text() || '').replace(/,/g, ''));
-                    rowData['totalConfirmcase'] = { indian: c1, Foreigner: c2 };
-                    rowData['Cured/Discharged/Migrated'] = Number(($(tds).eq(4).text() || '').replace(/,/g, ''));
-                    rowData['death'] = Number(($(tds).eq(5).text() || '').replace(/,/g, ''));
+                   // const c2 = Number(($(tds).eq(3).text() || '').replace(/,/g, ''));
+                    rowData['totalConfirmcase'] = c1; //{ indian: c1, Foreigner: c2 };
+                    rowData['Cured/Discharged/Migrated'] = Number(($(tds).eq(3).text() || '').replace(/,/g, ''));
+                    rowData['death'] = Number(($(tds).eq(4).text() || '').replace(/,/g, ''));
                     coronaData.push(rowData);
                 }
             }
