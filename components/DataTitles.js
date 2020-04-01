@@ -11,6 +11,7 @@ function preventDefault(event) {
 const useStyles = makeStyles({
   depositContext: {
     flex: 1,
+    color: "rgb(0, 200, 200)"
   },
 });
 

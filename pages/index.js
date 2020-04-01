@@ -24,7 +24,7 @@ import { mainListItems } from '../components/listitem';
 import Chart from '../components/Chart';
 import Orders from '../components/Orders';
 import DataTitles from '../components/DataTitles';
-import { Snackbar } from '@material-ui/core';
+import { Snackbar, Card } from '@material-ui/core';
 
 function Copyright({ url }) {
   return (
@@ -85,6 +85,7 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     flexGrow: 1,
+    wordBreak: "break-all"
   },
   drawerPaper: {
     position: 'relative',
@@ -123,11 +124,11 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
   },
   fixedHeight: {
-    height: 560,
+    height: 400,
   },
 }));
 
-const Dashboard = ({ totalCountChart, titles, stateWiseData, source, error, Note, ...restProps }) => {
+const Dashboard = ({ totalCountChart, titles, stateWiseData, source, error, Note, lastupdated, ...restProps }) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [infoOpen, setInfoOpen] = React.useState(Note !== "");
@@ -161,14 +162,11 @@ const Dashboard = ({ totalCountChart, titles, stateWiseData, source, error, Note
             <MenuIcon />
           </IconButton> */}
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Novel Corona Virus - India
-          </Typography>
-          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            The Helpline Number for corona-virus : +91-11-23978046 Toll Free No: 1075
+            COVID-19 India
           </Typography>
         </Toolbar>
       </AppBar>
-{/*       <Drawer
+      {/*       <Drawer
         variant="permanent"
         classes={{
           paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
@@ -190,15 +188,46 @@ const Dashboard = ({ totalCountChart, titles, stateWiseData, source, error, Note
             <Alert variant="filled" severity="info" onClose={() => setInfoOpen(false)}>{Note}</Alert>
           </Snackbar>
           <Grid container spacing={3}>
+            <Grid xs={12} md={4} lg={4} item>
+              <Card spacing={2}>
+                <Typography component="h1" variant="h6" color="error">
+                  Helpline Number: +91-11-23978046
+                </Typography>
+              </Card>
+
+            </Grid>
+            <Grid xs={12} md={4} lg={4} item>
+              <Card spacing={2}>
+                <Typography component="h1" variant="h6" color="error">
+                  Toll Free: 1075
+                </Typography>
+              </Card>
+
+            </Grid>
+
+            <Grid xs={12} md={4} lg={4} item>
+              <Card spacing={2}>
+                <Typography component="h1" variant="h6" color="error">
+                  Helpline Email ID: ncov2019@gov.in
+                </Typography>
+              </Card>
+            </Grid>
             {/* Chart */}
-            {/*<Grid item xs={12} md={8} lg={9}>
-              <Paper className={fixedHeightPaper}>
-                <Chart {...totalCountChart} />
-              </Paper>
-      </Grid>*/}
+            <Grid container>
+              <Grid item xs>
+                <Paper className={fixedHeightPaper}>
+                  <Chart {...totalCountChart} />
+                </Paper>
+              </Grid>
+            </Grid>
             {/* Recent Deposits */}
             <Grid item xs={12}>
               <Grid container justify="center" spacing={3}>
+                <Grid xs={12} md={12} lg={12} item>
+                  <Typography component="h1" variant="h6" color="inherit">
+                    {lastupdated}
+                  </Typography>
+                </Grid>
                 {titles.map((t, i) => (
                   <Grid key={i} xs={12} md={6} lg={3} item>
                     <Paper className={classes.paper} style={{ textAlign: 'center', minHeight: '150px' }}><DataTitles {...t} /></Paper>
@@ -235,29 +264,31 @@ export async function getServerSideProps({ req }) {
     const { Total_Confirmed_cases, death } = data.Total;
     //const aY = parseInt(indian);
     //const bY = parseInt(foreigner);
+    const activCase = data.Totalinfo['active_cases'];
+    const curedCase = data.Total['Cured/Discharged/Migrated'];
     const titles = [{
       title: 'Total Confirm Cases',
       count: Total_Confirmed_cases
     },
     {
-      title: 'Death',
+      title: 'Active Cases',
+      count: activCase
+    },
+    {
+      title: 'Deaths',
       count: death
     },
     {
       title: 'Cured / Discharged/ Migrated',
-      count: data.Total['Cured/Discharged/Migrated']
-    },
-    {
-      title: 'Screened at Airport',
-      count: data.Totalinfo['screened_at_airpot']
-    },
+      count: curedCase
+    }
     ];
 
     const statesData = data['effected states'];
     const stateDataColumn = [{ title: 'State/UT', field: 'state' },
     { title: 'Total Confirm Cases', field: 'totalcase' },
-    { title: 'Cured/Discharged/Migrated', field: 'cured' },
-    { title: 'Death', field: 'death' }
+    { title: 'Cured / Discharged / Migrated', field: 'cured' },
+    { title: 'Deaths', field: 'death' }
     ];
     const dataStates = statesData.map((a) => ({
       "state": a.namestateorut,
@@ -265,15 +296,18 @@ export async function getServerSideProps({ req }) {
       "cured": a['Cured/Discharged/Migrated'],
       "death": a.death
     }));
-    /* totalCountChart: {
-          data: [{ name: "INDIAN", y: aY, color: 'rgb(241, 92, 128)' },
-          { name: "FOREIGNER", y: bY, color: 'rgb(124, 181, 236)' }],
-          title: `Total Confirm Cases <b>${aY + bY}</b> as on <b>${data.Lastupdated}</b> in India`
-        },
-      */
+
     return {
       props: {
+        totalCountChart: {
+          data: [{ name: "Active Cases", y: parseInt(activCase), color: 'rgb(128, 100, 198)' },
+          { name: "Cured/Migrated", y: parseInt(curedCase), color: 'rgb(100, 145, 80)' },
+          { name: "Deaths", y: parseInt(death), color: 'rgb(241, 92, 128)' }
+          ],
+          title: `COVID-19 INDIA ${data.Lastupdated}`
+        },
         titles: titles || [],
+        lastupdated: data.Lastupdated,
         stateWiseData: {
           columns: stateDataColumn,
           data: dataStates

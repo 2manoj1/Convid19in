@@ -9,15 +9,14 @@ const fetchData = async () => {
         const html = await response.text();
         const $ = cheerio.load(html);
         const latestUpdateTable = $('tr', 'div.table-responsive > table > tbody');
-        const statsTable = $('tbody > tr', '.content.newtab > .table-responsive > table');
+        const statsTable = $('tbody > tr', '.data-table.table-responsive > table');
         const dataCoronaDetails = {};
         const coronaData = [];
         if ($("p:contains(*Total number of confirmed cases so far in the cou)")) {
             dataCoronaDetails['Note'] = $("p:contains(*Total number of confirmed cases so far in the cou)").text();
         }
         dataCoronaDetails["Totalinfo"] = {
-            "screened_at_airpot": $("div:contains(Passengers screened at airport)").siblings("span.icount").text().replace(/,/g, ''),
-            "active_cases": $("div:contains(Active COVID 2019 cases)").siblings("span.icount").text().replace(/,/g, '')
+            "active_cases": $("span:contains(Active Cases)").siblings("strong").text().replace(/,/g, '')
         }
         let updateData = [];
         latestUpdateTable.each(function (i) {
@@ -59,7 +58,7 @@ const fetchData = async () => {
         dataCoronaDetails['effected states'] = coronaData;
         dataCoronaDetails["latest_update"] = updateData;
         dataCoronaDetails['Datasourceurl'] = 'https://www.mohfw.gov.in';
-        dataCoronaDetails['Lastupdated'] = ($("p:contains('as on')", 'div.content.newtab').text().split(' on ')[1] || "").replace(")", '');
+        dataCoronaDetails['Lastupdated'] = $("div.status-update > h2 > span").text();
         inMemeory = dataCoronaDetails;
         return dataCoronaDetails;
     }
